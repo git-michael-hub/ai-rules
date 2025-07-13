@@ -1,0 +1,1 @@
+- Apply immutability principles and pure functions wherever possible

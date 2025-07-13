@@ -1,0 +1,107 @@
+---
+globs: *.component.ts
+alwaysApply: false
+---
+
+# Angular Component Standards
+
+All components should follow these standards:
+
+## Structure
+
+- Use standalone components when applicable
+
+- Property order:
+   1. Injected services (using `inject()`)
+   2. Inputs
+   3. Outputs
+   4. Signals
+   5. Other properties
+
+- Method order:
+   1. Public methods
+   2. Protected methods
+   3. Private methods
+
+## Modern Angular Features
+  - Use `input()` and `input.required()` instead of `@Input()`
+  - Use `output()` instead of `@Output()`
+  - Use `model()` for two-way binding
+  - Use `inject()` for dependency injection
+  - Avoid `public` accessor
+  - Use `protected` when possible
+
+## Event Handling
+  - Output names should be the action (e.g., `click`, `submit`)
+  - Handler methods should use `on` prefix (e.g., `onClick`, `onSubmit`)
+  - Example: `<button (click)="onClick($event)">`
+
+## Example:
+
+```typescript
+@Component({
+ selector: 'app-feature',
+ templateUrl: './feature.component.html',
+ styleUrls: ['./feature.component.scss'],
+ changeDetection: ChangeDetectionStrategy.OnPush,
+ imports: [CommonModule, RouterModule, SharedModule],
+ standalone: true,
+})
+export class FeatureComponent implements OnInit {
+
+ // 1. Injected services (using inject())
+ private readonly featureService = inject(FeatureService);
+ private readonly cdr = inject(ChangeDetectorRef);
+
+ // 2. Inputs
+ data = input<FeatureData | null>(null);
+ requiredId = input.required<string>();
+
+ // 3. Outputs
+ click = output<Action>();
+ submit = output<FormData>();
+
+ // 4. Signals
+ loading = signal(false);
+ items = signal<Item[]>([]);
+
+ // Computed signals for derived state
+ hasItems = computed(() => this.items().length > 0);
+ itemCount = computed(() => this.items().length);
+
+ // 5. Other properties
+ // (none in this example)
+ constructor() {
+   // Use effects for reactive behavior with signals
+   effect(() => {
+     const currentData = this.data();
+       if (currentData) {
+         // Handle data changes
+         this.items.set(currentData.items || []);
+       }
+   });
+ }
+
+ ngOnInit(): void {
+   // Component initialization
+ }
+
+ // 1. Public methods
+ onClick(event: Event): void {
+   this.click.emit({ type: 'action', event });
+ }
+
+ onSubmit(formData: FormData): void {
+   this.submit.emit(formData);
+ }
+
+ // 2. Protected methods (when needed)
+ protected handleData(data: Item[]): void {
+   this.items.set(data);
+ }
+
+ // 3. Private methods
+ private updateLoadingState(isLoading: boolean): void {
+   this.loading.set(isLoading);
+ }
+}

@@ -1,0 +1,50 @@
+---
+alwaysApply: true
+---
+
+# Global Angular Conventions
+These conventions apply to all Angular code in this project:
+
+## Core Principles
+- Write clear, maintainable, and scalable code
+- Apply immutability and pure functions
+- Favor component composition for modularity
+- Use meaningful variable names (e.g., `isActive`, `hasPermission`)
+- Follow Angular's official style guide
+
+## File Structure & Naming
+- Use kebab-case for all files
+- Components: PascalCase with Component suffix (UserProfileComponent)
+- Services: PascalCase with Service suffix (AuthenticationService)
+- Interfaces: PascalCase with prefix I (IUserProfile) or descriptive name (UserProfile)
+- Enums: PascalCase (UserRole)
+- Constants: UPPER_SNAKE_CASE (API_ENDPOINTS)
+
+## Import Order
+1. Angular core and common modules
+2. RxJS modules
+3. Other Angular modules
+4. Application core imports
+5. Shared module imports
+6. Environment-specific imports
+7. Relative path imports
+
+## Code Style
+- Use TypeScript strict mode
+- No any types - use proper typing or unknown if necessary
+- Prefer const over let, avoid var
+- Use async/await when possible instead of Promise chains
+- Document public APIs with JSDoc comments
+
+## Structure
+- Organize code by feature modules
+- Keep components under 300 lines where possible
+- Extract complex logic to services
+- Use smart/dumb component pattern:
+ - Smart (container) components handle data and state
+ - Dumb (presentation) components receive inputs and emit outputs
+
+## State Management
+- Use NgRx for global application state
+- Use component state for UI-only concerns
+- Use services with signals for shared state within a feature

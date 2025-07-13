@@ -1,0 +1,8 @@
+---
+alwaysApply: true
+---
+
+## Angular Best Practices
+- Implement lazy loading for feature routes
+- Use `NgOptimizedImage` for all static images.
+- Apply immutability principles and pure functions wherever possible

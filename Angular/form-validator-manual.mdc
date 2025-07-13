@@ -1,0 +1,77 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+
+# Custom Form Validator with Signals
+
+## Core Rules
+  1. Use signals for reactive form validation
+  2. Implement computed values for error messages
+  3. Use proper typing for form controls
+  4. Keep validation logic in separate methods
+
+## Best Practices
+  1. Use inject() for dependency injection
+  2. Implement proper form cleanup
+  3. Use proper typing for validators
+  4. Keep validation rules focused and small
+
+## Example
+
+```typescript
+@Component({
+   selector: 'app-password-form',
+   standalone: true,
+   imports: [CommonModule, ReactiveFormsModule],
+   template: `
+     <form [formGroup]="form">
+     <input
+       type="password"
+       formControlName="password"
+       [class.error]="passwordError()"
+     />
+     @if (passwordError()) {
+       <div class="error-message">
+         {{ passwordError() }}
+       </div>
+     }
+     </form>
+ `
+})
+export class PasswordFormComponent {
+
+  private readonly fb = inject(FormBuilder);
+
+  form = this.fb.group({
+     password: ['', [Validators.required, this.passwordStrengthValidator()]]
+  });
+
+  passwordError = computed(() => {
+     const control = this.form.get('password');
+     if (!control?.touched) return null;
+
+      return control.errors?.['passwordStrength']?.message;
+  });
+
+  private passwordStrengthValidator(): ValidatorFn {
+     return (control: AbstractControl) => {
+     const value = control.value;
+     if (!value) return null;
+
+     const hasUpperCase = /[A-Z]/.test(value);
+     const hasLowerCase = /[a-z]/.test(value);
+     const hasNumber = /[0–9]/.test(value);
+     if (!hasUpperCase || !hasLowerCase || !hasNumber) {
+        return {
+          passwordStrength: {
+            message: 'Password must contain uppercase, lowercase, and numbers'
+          }
+        };
+     }
+     return null;
+   };
+ }
+}
+```

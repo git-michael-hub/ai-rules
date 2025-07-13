@@ -1,0 +1,66 @@
+---
+description: Guidelines for implementing modern Angular patterns using signals and defer blocks
+alwaysApply: false
+---
+
+# Modern Component with Signals and Defer
+## Core Rules
+1. Use signals for all component state
+2. Implement computed values for derived state
+3. Use @defer for lazy loading heavy components
+4. Leverage new control flow syntax (@if, @for)
+5. Keep components standalone by default
+
+## Best Practices
+1. Use inject() for dependency injection
+2. Implement proper cleanup in effects
+3. Use proper typing for signals
+4. Keep components focused and small
+5. Use proper error boundaries
+
+## Example:
+
+```typescript
+@Component({
+   selector: 'app-user-list',
+   standalone: true,
+   imports: [CommonModule],
+   template: `
+    @if (loading()) {
+      <div>Loading…</div>
+    }
+    @else {
+      <div class="user-list">
+        @for (user of users(); track user.id) {
+          <div class="user-card">
+            <h3>{{ user.name }}</h3>
+            <p>{{ user.email }}</p>
+          </div>
+        }
+        @empty {
+          <p>No users found</p>
+        }
+      </div>
+    }
+    @defer (on viewport) {
+      <app-user-stats [users]="users()" />
+    }
+    @loading {
+      <div>Loading stats…</div>
+    }
+ `
+})
+export class UserListComponent {
+   private readonly userService = inject(UserService);
+
+   // State with signals
+   loading = signal(false);
+   users = signal<User[]>([]);
+
+   // Computed values
+   userCount = computed(() => this.users().length);
+   activeUsers = computed(() =>
+   this.users().filter(user => user.status === 'active')
+ );
+}
+
